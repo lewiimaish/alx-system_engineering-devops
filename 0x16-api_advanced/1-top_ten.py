@@ -1,9 +1,11 @@
 #!/usr/bin/python3
+
 import requests
+
 
 def top_ten(subreddit):
     url = f"https://www.reddit.com/r/{subreddit}/hot.json?limit=10"
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36'}
+    headers = {'User-Agent': 'Mozilla/5.0'}
 
     try:
         response = requests.get(url, headers=headers, allow_redirects=False)
@@ -14,5 +16,5 @@ def top_ten(subreddit):
                 print(post['data']['title'])
         else:
             print("None")
-    except Exception as e:
+    except Exception:
         print("None")
