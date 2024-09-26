@@ -1,15 +1,13 @@
+
 #!/usr/bin/python3
-'''prints a sorted count of given keywords
-(case-insensitive, delimited by spaces.'''
+'''returns a list containing the titles of all hot
+articles for a given subreddit.'''
 import requests
 
 
-def count_words(subreddit, word_list, after=None, word_count={}):
-    '''prints a sorted count of given keywords
-    (case-insensitive, delimited by spaces.'''
-    if not word_list:
-        return
-
+def recurse(subreddit, hot_list=[], after=None):
+    '''returns a list containing the titles of all
+    hot articles for a given subreddit.'''
     url = f"https://www.reddit.com/r/{subreddit}/hot.json?limit=100"
     headers = {'User-Agent': 'MyBot/0.0.1'}
     params = {'after': after} if after else {}
@@ -22,21 +20,14 @@ def count_words(subreddit, word_list, after=None, word_count={}):
             data = response.json()
             posts = data['data']['children']
             for post in posts:
-                title = post['data']['title'].lower()
-                for word in word_list:
-                    if word.lower() in title:
-                        word_count[word] = word_count.get(word, 0) + 1
-
+                hot_list.append(post['data']['title'])
             after = data['data']['after']
             if after:
-                return count_words(subreddit, word_list, after, word_count)
+                return recurse(subreddit, hot_list, after)
             else:
-                sorted_word_count = sorted(
-                        word_count.items(),
-                        key=lambda x: (-x[1], x[0]))
-                for word, count in sorted_word_count:
-                    print(f"{word.lower()}: {count}")
+                return hot_list
         else:
-            return
+            return None  # Invalid subreddit or other error
     except Exception as e:
         print(f"Error: {e}")
+        return None  # Return None if an exception occurs
